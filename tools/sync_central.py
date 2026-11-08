@@ -4,7 +4,7 @@ Read-only against the central catalogue (https://cedwyn.bucklerfamily.estate/api
 derived cache: never edit it by hand; the central catalogue stays the single source of truth. The file is rewritten only
 when a record it holds changed, and a run that can read fewer than half of the records leaves it as it was.
 Research Library: the record IDs come from every text file in the repo (html, json, js, csv, xml, txt, md; the evidence pages,
-registers and missing-records pages), so a record cited there later is picked up on the next run with no hand-kept list. Run by .github/workflows/sync-central.yml every
+registers and missing-records pages; MR ids only from missing-records/, because the media register reuses the MR prefix), so a record cited there later is picked up on the next run with no hand-kept list. Run by .github/workflows/sync-central.yml every
 6 hours. — Sion's Tab agent"""
 import json, re, sys, time, datetime, pathlib, urllib.request
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -16,7 +16,11 @@ ids = set()
 for g in NEEDS:
     for f in sorted(ROOT.glob(g)):
         if f.resolve() == OUT.resolve(): continue   # never read the store itself
-        ids |= set(re.findall(r'\b(?:EV|MR|AR)-\d{4}\b', f.read_text(encoding='utf-8')))
+        found = set(re.findall(r'\b(?:EV|MR|AR)-\d{4}\b', f.read_text(encoding='utf-8')))
+        # 8 Nov 2026 (P-RESEARCH-IDS-NOT-IN-CENTRAL): the media register on the evidence pages also numbers its entries MR-0001..,
+        # so an MR id is a missing record only on the missing-records pages; elsewhere it is a media entry and is not compared.
+        if 'missing-records' not in f.relative_to(ROOT).parts: found = {i for i in found if not i.startswith('MR-')}
+        ids |= found
 items, miss, cat, total, off = {}, [], {}, None, 0
 try:   # paged list reads (/api/catalogue?limit=500&offset=N, edge-cached), not one uncached request per ID (8 Nov 2026, D1 read load)
     while True:
@@ -34,7 +38,7 @@ except Exception as e:
 if total is None or len(cat) < total:
     sys.exit(f'catalogue listing incomplete ({len(cat)} of {total}); store left as it was')
 for i in sorted(ids):
-    if i in cat: items[i] = cat[i]
+    if i in cat and not (i.startswith('MR-') and cat[i].get('kind') != 'missing_record'): items[i] = cat[i]
     else: miss.append(i)
 prev = {}
 try: prev = json.loads(OUT.read_text(encoding='utf-8'))
