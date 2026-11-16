@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Search · Research Library · Cedwyn Estate</title>
+<style>
+  :root{color-scheme:light dark}
+  body{margin:0;font:16px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;background:#f7f4ee;color:#1d1a16}
+  main{max-width:34rem;margin:0 auto;padding:2.5rem 1rem}
+  h1{font-size:1.4rem;margin:0 0 .5rem}
+  p{margin:.5rem 0 1rem}
+  form{display:flex;gap:.5rem;flex-wrap:wrap}
+  input[type=search]{flex:1 1 12rem;min-width:0;padding:.6rem .7rem;font:inherit;border:1px solid #8a8072;border-radius:6px;background:#fff;color:#1d1a16}
+  button{padding:.6rem 1rem;font:inherit;border:1px solid #1d1a16;border-radius:6px;background:#1d1a16;color:#fff;cursor:pointer}
+  a{color:inherit}
+  @media (prefers-color-scheme:dark){
+    body{background:#14110d;color:#efe9df}
+    input[type=search]{background:#1f1b16;color:#efe9df;border-color:#6d6457}
+    button{background:#efe9df;color:#14110d;border-color:#efe9df}
+  }
+</style>
+<script>
+(function () {
+  // The Research Library search boxes submit here with ?q=<term>.
+  // The catalogue search reads the same parameter, so hand the query on.
+  var q = '';
+  try { q = new URLSearchParams(location.search).get('q') || ''; } catch (e) {}
+  q = q.trim();
+  if (q) { location.replace('/catalogue/?q=' + encodeURIComponent(q)); }
+})();
+</script>
+</head>
+<body>
+<main>
+  <h1>Search the records</h1>
+  <p>Search covers every record in the evidence catalogue, including the Research Library pages.</p>
+  <form action="/catalogue/" method="get" role="search">
+    <label for="q" style="position:absolute;left:-9999px">Search term</label>
+    <input id="q" name="q" type="search" placeholder="For example: Llandough" autocomplete="off" autofocus>
+    <button type="submit">Search</button>
+  </form>
+  <p><a href="/research/">Back to the Research Library</a></p>
+</main>
+</body>
+</html>
