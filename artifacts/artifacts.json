@@ -361,7 +361,10 @@
    "ev": "EV-0482",
    "wtds": [],
    "url": "/research/artifacts/ghf-e106-r115-a1/",
-   "state": "Read"
+   "state": "Read",
+   "archive_url": "https://wayback.bucklerfamily.estate/pdf/evidence/2026-10-13_llandough-community-council_agenda-22-october-2026.pdf",
+   "archive_sha256": "4417c49486606201987b121ebea0ba437ba2bbe7fc240ae2345fa84c36c9e986",
+   "wayback_artifact_id": "WB-0032"
   },
   {
    "cat": "GHF-E106-R116-A1",
